@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="root">
+        <Test :msg="message" />
+    </div>
+    <script>
+        /* vue.component用法 */
+        // Vue.component('Test', {
+        //     template: "<div>{{msg}}</div>",
+        //     props: {
+        //         msg: {
+        //             type: String,
+        //             default: 'default message'
+        //         }
+        //     }
+        // })
+
+        /* vue.extend的基本用法 */
+        const component = Vue.extend({
+            template: "<div>{{msg}}</div>",
+            props: {
+                msg: {
+                    type: String,
+                    default: 'default message --extend'
+                }
+            }
+        })
+        Vue.component('Test', component)
+        
+        new Vue({
+            el: '#root',
+            data() {
+                return {
+                    message: 'Test Component'
+                }
+            },
+            methods: {}
+        })
+    </script>
+</body>
+
+</html>

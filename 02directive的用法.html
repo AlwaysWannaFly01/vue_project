@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="root">
+        <div v-loading="isLoading">{{data}}</div>
+        <button @click="update">更新</button>
+    </div>
+    <script>
+        /* 写法一*/
+        // Vue.directive('loading', {
+        //     update(el, binding, vnode) {
+        //         /* el: 绑定v-loading指令的元素*/
+        //         /* binding: 打印该参数
+        //             value ：就对应绑定（isLoading）的值 
+        //             oldValue：isLoading的旧值 
+        //             rowName：原始名称
+        //         */
+        //         console.log(el, binding, vnode);
+        //         if (binding.value) {
+        //             const div = document.createElement('div')
+        //             div.innerText = '加载中...'
+        //             div.setAttribute('id', 'loading')
+        //             div.style.position = 'fixed'
+        //             div.style.left = 0
+        //             div.style.top = 0
+        //             div.style.width = "100%"
+        //             div.style.height = "100%"
+        //             div.style.display = "flex"
+        //             div.style.justifyContent = "center"
+        //             div.style.alignItems = "center"
+        //             div.style.color = 'white'
+        //             // div.style.color = '#fff'
+        //             div.style.background = 'rgba(0,0,0,.3)'
+        //             document.body.append(div)
+        //         } else {
+        //             // document.body.removeChild(document.getElementById('loading'))
+        //         }
+        //     }
+        // })
+
+        /* 写法二 */
+        Vue.directive('loading',
+            function update(el, binding, vnode) {
+                console.log(el, binding, vnode);
+                if (binding.value) {
+                    const div = document.createElement('div')
+                    div.innerText = '加载中...'
+                    div.setAttribute('id', 'loading')
+                    div.style.position = 'fixed'
+                    div.style.left = 0
+                    div.style.top = 0
+                    div.style.width = "100%"
+                    div.style.height = "100%"
+                    div.style.display = "flex"
+                    div.style.justifyContent = "center"
+                    div.style.alignItems = "center"
+                    div.style.color = 'white'
+                    // div.style.color = '#fff'
+                    div.style.background = 'rgba(0,0,0,.3)'
+                    document.body.append(div)
+                } else {
+                    // document.body.removeChild(document.getElementById('loading'))
+                    /* 直接这样写会报错 */
+                    /* 因为现在传入的update是function，而不是对象，
+                       查看源码，该function会被加入到bind和update两个生命周期中；
+                       在bind的时候，传入的isLoading是false 
+                       会走else的内容
+                       这个时候，id为loading的元素还没有被加入到dom中 
+                       所以会报  Failed to execute 'removeChild' on 'Node' 的错误
+
+                       改造成如下代码
+                    */
+                    const div = document.getElementById('loading')
+                    div && document.body.removeChild(div)
+                }
+            }
+        )
+
+        new Vue({
+            el: "#root",
+            data() {
+                return {
+                    isLoading: false,
+                    data: ''
+                }
+            },
+            methods: {
+                update() {
+                    this.isLoading = true;
+                    setTimeout(() => {
+                        this.data = '1.8s显示数据'
+                        this.isLoading = false
+                    }, 1800)
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

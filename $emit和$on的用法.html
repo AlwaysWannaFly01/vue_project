@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="root">
+        <button @click="boost">触发事件</button>
+    </div>
+    <script>
+        new Vue({
+            el: '#root',
+            data() {
+                return {
+                    message: 'Hello AlwaysWannaFly!'
+                }
+            },
+            created() {
+                /* 看源码 */
+                /* 可以为同一个事件绑定多个处理方法 */
+                /* 按照顺序 依次执行 */
+                /* this.$on('test', this.handleClick) 
+                this.$on('test', this.handleClick2) */
+
+                /* 可以为不同的事件绑定同一个处理方法  传入一个数组 */
+                this.$on(['test', 'demo'], this.handleClick)
+                console.log(this._events);
+
+            },
+            methods: {
+                handleClick(e) {
+                    console.log(this.message, e);
+                },
+                handleClick2(e) {
+                    console.log('handleClick2', e);
+                },
+                boost() {
+                    this.$emit('demo', 'my params demo')
+                    this.$emit('test', 'my params') 
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

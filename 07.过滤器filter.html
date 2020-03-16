@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="root">
+        {{message | lower}}
+    </div>
+    <script>
+        new Vue({
+            el: '#root',
+            filters: {
+                lower(value) {
+                    return value.toLowerCase()
+                }
+            },
+            data() {
+                return {
+                    message: 'HELLO AWY'
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

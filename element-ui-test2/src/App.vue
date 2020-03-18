@@ -6,9 +6,15 @@
             :rules="rules"
             ref="form"
             :validate-on-rule-change="false"
+            status-icon
         >
             <!-- validate-on-rule-change 为true时 ，在 rules 属性改变后立即触发一次验证 -->
-            <el-form-item label="审批人" prop="user">
+            <el-form-item
+                label="审批人"
+                prop="user"
+                :validate-status="status"
+                :error="error"
+            >
                 <el-input v-model="data.user" placeholder="审批人"></el-input>
             </el-form-item>
             <el-form-item label="活动区域">
@@ -21,6 +27,13 @@
                 <el-button type="primary" @click="onSubmit">查询</el-button>
                 <el-button type="primary" @click="addRule"
                     >添加校验规则</el-button
+                >
+                <el-button type="success" @click="showSuccess"
+                    >成功校验</el-button
+                >
+                <el-button type="danger" @click="showError">失败校验</el-button>
+                <el-button type="warning" @click="showValidating"
+                    >校验中</el-button
                 >
             </el-form-item>
         </el-form>
@@ -54,7 +67,9 @@ export default {
                     }
                     // { validator: userValidator, trigger: "blur" }
                 ]
-            }
+            },
+            error: "",
+            status: ""
         };
     },
     methods: {
@@ -86,7 +101,19 @@ export default {
                 { validator: userValidator, trigger: "blur" }
             ];
             this.rules = Object.assign({}, this.rules, { user: newRule });
-        }
+        },
+        showSuccess() {
+            this.status = "success";
+            this.error = "";
+        },
+        showError() {
+            this.status = "error";
+            this.error = "用户名输入有误";
+        },
+        showValidating() {
+            this.status = "validating";
+            this.error = "";
+        },
     }
 };
 </script>

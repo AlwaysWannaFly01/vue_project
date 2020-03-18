@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+</head>
+
+<body>
+    <div id="root">
+        {{data}}
+    </div>
+    <div id="root2">
+        {{data2}}
+    </div>
+    <div id="root3">
+        <button @click="change">change</button>
+    </div>
+    <script>
+        function registerPlugin(Vue) {
+            const vuex = {}
+            vuex._vm = new Vue({
+                data: {
+                    message: 'hello vue.js'
+                }
+            })
+            vuex.state = vuex._vm
+            vuex.mutations = {
+                setMessage(value) {
+                    vuex.state.message = value
+                }
+            }
+
+            function init() {
+                this.$store = vuex
+            }
+            Vue.mixin({
+                beforeCreate: init 
+            })
+        }
+
+        Vue.use(registerPlugin)
+        new Vue({
+            el: '#root',
+            computed: {
+                data() {
+                    return this.$store.state.message
+                }
+            },
+        })
+
+        new Vue({
+            el: '#root2',
+            computed: {
+                data2() {
+                    return this.$store.state.message
+                }
+            },
+        })
+
+        new Vue({
+            el: '#root3',
+            methods: {
+                change() {
+                    const newValue = this.$store.state.message + '.'
+                    this.$store.mutations.setMessage(newValue)
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

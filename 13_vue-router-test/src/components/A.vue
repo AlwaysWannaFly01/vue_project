@@ -5,6 +5,7 @@
 export default {
     beforeCreate() {
         console.log("beforeCreate");
+        // document.title="A"
     },
     beforeMount() {
         console.log("beforeMount");

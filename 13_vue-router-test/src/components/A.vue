@@ -1,7 +1,12 @@
 <template>
-    <div>component A</div>
+    <div>
+        component A
+        <button @click="addRoute">AddRoute</button>
+        <router-link to="/b">to Component B</router-link>
+    </div>
 </template>
 <script>
+import B from "./B";
 export default {
     beforeCreate() {
         console.log("beforeCreate");
@@ -38,6 +43,16 @@ export default {
 
         // 导航离开该组件的对应路由时调用
         // 可以访问组件实例 `this`
+    },
+    methods: {
+        addRoute() {
+            this.$router.addRoutes([
+                {
+                    path: "/b",
+                    component: B
+                }
+            ]);
+        }
     }
 };
 </script>

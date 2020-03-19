@@ -3,7 +3,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import A from './components/A.vue'
-import B from './components/B.vue'
+// import B from './components/B.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -21,14 +21,16 @@ const routes = [
             title: 'A'
         }
     },
-    {
-        path: '/b',
-        component: B
-    }
+    // {
+    //     path: '/b',
+    //     component: B
+    // }
 ]
 const router = new VueRouter({
     routes
 })
+console.log(router, 'router');
+
 
 /* 方案2，不推荐 ，不建议放在业务的生命周期中*/
 // Vue.mixin({

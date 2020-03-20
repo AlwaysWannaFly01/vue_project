@@ -1,6 +1,9 @@
 const express = require('express')
+const router = require('./router')
+
 const app = express()
 
+app.use('/', router)
 // function myLogger(req, res, next) {
 //     console.log('myLogger');
 //     /* 使用中间件，next方法一定要调用，否则不会继续向下执行 */
@@ -9,22 +12,22 @@ const app = express()
 // }
 // app.use(myLogger)
 
-app.get('/', (req, res) => {
-    throw new Error('error')
-    res.send('hello node')
-})
+// app.get('/', (req, res) => {
+//     // throw new Error('error')
+//     res.send('hello node')
+// })
 
-const errorHandler = (err, req, res, next) => {
-    /* 四个参数一个都不能少 */
-    /* 异常处理需要后置 */
-    console.log('errorHandler');
-    res.status(400).json({
-        error: -1,
-        msg: err.toString()
-    })
-    res.send('down...')
-}
-app.use(errorHandler)
+// const errorHandler = (err, req, res, next) => {
+//     /* 四个参数一个都不能少 */
+//     /* 异常处理需要后置 */
+//     console.log('errorHandler');
+//     res.status(400).json({
+//         error: -1,
+//         msg: err.toString()
+//     })
+//     res.send('down...')
+// }
+// app.use(errorHandler)
 
 // app.post('/user', (req, res) => {
 //     res.send('hello node2')

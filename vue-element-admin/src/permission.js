@@ -6,11 +6,14 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
+/* 右侧加载圆环 */
+NProgress.configure({ showSpinner: true }) // NProgress Configuration
 
+/* 白名单页面 */
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
+  // debugger
   // start progress bar
   NProgress.start()
 
@@ -44,6 +47,8 @@ router.beforeEach(async(to, from, next) => {
 
           // hack method to ensure that addRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
+          // throw Error('出错了')
+          /* replace: true 導航不會留下歷史記錄 */
           next({ ...to, replace: true })
         } catch (error) {
           // remove token and go to login page to re-login

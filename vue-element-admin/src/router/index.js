@@ -87,7 +87,31 @@ export const constantRoutes = [
 export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/404', hidden: true },
+  {
+    path: '/book',
+    component: Layout,
+    redirect: '/book/create',
+    meta: { title: '图书管理', icon: 'documenttion', roles: ['admin', 'editor'] },
+    children: [{
+      path: '/book/create',
+      component: () => import('@/views/book/create'),
+      meta: {
+        title: '上传图书',
+        icon: 'edit',
+        roles: ['admin']
+      }
+    }, {
+      path: '/book/list',
+      component: () => import('@/views/book/create'),
+      meta: {
+        title: '图书列表',
+        icon: 'edit',
+        roles: ['editor']
+        // activeMenu: '/book/create' /* 设置默认高亮 */
+      }
+    }]
+  }
 ]
 
 const createRouter = () => new Router({

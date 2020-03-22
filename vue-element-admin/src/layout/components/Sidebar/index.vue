@@ -35,7 +35,9 @@ export default {
       const route = this.$route
       const { meta, path } = route
       // if set path, the sidebar will highlight the path you set
+      /* 设置默认高亮 */
       if (meta.activeMenu) {
+        // console.log(meta.activeMenu)
         return meta.activeMenu
       }
       return path

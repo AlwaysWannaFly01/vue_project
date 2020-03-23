@@ -104,7 +104,7 @@ export const asyncRoutes = [
       },
       children: [
         {
-          // path: 'http://www.baidu.com',
+          // path: 'http://www.baidu.com ',
           path: '/book/create',
           component: () => import('@/views/book/create'),
           meta: {

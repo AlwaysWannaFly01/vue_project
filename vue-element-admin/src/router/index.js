@@ -94,14 +94,37 @@ export const asyncRoutes = [
     redirect: '/book/create',
     meta: { title: '图书管理', icon: 'documenttion', roles: ['admin', 'editor'] },
     children: [{
-      path: 'http://www.baidu.com',
-      // path: '/book/create',
+      // path: 'http://www.baidu.com',
+      path: '/book/create',
       component: () => import('@/views/book/create'),
       meta: {
         title: '上传图书',
         icon: 'edit',
         roles: ['admin']
-      }
+      },
+      children: [
+        {
+          // path: 'http://www.baidu.com',
+          path: '/book/create',
+          component: () => import('@/views/book/create'),
+          meta: {
+            title: '上传图书',
+            icon: 'edit',
+            roles: ['admin']
+          }
+        }, {
+          path: '/book/list',
+          component: () => import('@/views/book/create'),
+          meta: {
+            title: '图书列表',
+            icon: 'edit',
+            roles: ['editor']
+            // activeMenu: '/book/create' /* 设置默认高亮 */
+          },
+          /* 对应SidebarItem中的hidden，为true不展示 */
+          hidden: false
+        }
+      ]
     }, {
       path: '/book/list',
       component: () => import('@/views/book/create'),
@@ -112,7 +135,7 @@ export const asyncRoutes = [
         // activeMenu: '/book/create' /* 设置默认高亮 */
       },
       /* 对应SidebarItem中的hidden，为true不展示 */
-      hidden: true
+      hidden: false
     }]
   }
 ]

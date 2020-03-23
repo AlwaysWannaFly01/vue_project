@@ -116,11 +116,17 @@ export default {
     $route: {
       handler: function(route) {
         const query = route.query
+        // console.log(query)
+
         if (query) {
           this.redirect = query.redirect
+
+          /* 提取出非redirect的其它属性 */
           this.otherQuery = this.getOtherQuery(query)
+          // console.log(this.otherQuery)
         }
       },
+      /* immediate: true ，在created时就会被调用 */
       immediate: true
     }
   },
@@ -158,6 +164,7 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
+              /* 从/book/list退出，保留redirect信息，otherQuery有参数则会带着，点击登录则会直接跳转到 /book/list路由下并带参数*/
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })

@@ -40,7 +40,10 @@ export const constantRoutes = [
     hidden: true,
     children: [
       {
+        /* 表示匹配零个或多个路由，比如路由为 /redirect/book/list?a=1 时，仍然能匹配到 redirect 组件。 */
         path: '/redirect/:path(.*)',
+        /* 如果将路由改为：path: '/redirect/:path',此时路由 /redirect 将只能匹配到 Layout 组件，而无法匹配到 redirect 组件 */
+        // path: '/redirect/:path',
         component: () => import('@/views/redirect/index')
       }
     ]
@@ -101,30 +104,7 @@ export const asyncRoutes = [
         title: '上传图书',
         icon: 'edit',
         roles: ['admin']
-      },
-      children: [
-        {
-          // path: 'http://www.baidu.com ',
-          path: '/book/create',
-          component: () => import('@/views/book/create'),
-          meta: {
-            title: '上传图书',
-            icon: 'edit',
-            roles: ['admin']
-          }
-        }, {
-          path: '/book/list',
-          component: () => import('@/views/book/create'),
-          meta: {
-            title: '图书列表',
-            icon: 'edit',
-            roles: ['editor']
-            // activeMenu: '/book/create' /* 设置默认高亮 */
-          },
-          /* 对应SidebarItem中的hidden，为true不展示 */
-          hidden: false
-        }
-      ]
+      }
     }, {
       path: '/book/list',
       component: () => import('@/views/book/create'),

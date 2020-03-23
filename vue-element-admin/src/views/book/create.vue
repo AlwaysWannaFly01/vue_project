@@ -53,6 +53,15 @@
     <el-col>
       <el-button @click="isCollapse = !isCollapse">折叠</el-button>
     </el-col>
+    <el-col>
+      <el-breadcrumb separator="\">
+        <!-- 使用to属性不会发送网络请求 -->
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
+        <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+        <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+      </el-breadcrumb>
+    </el-col>
   </el-row>
 </template>
 

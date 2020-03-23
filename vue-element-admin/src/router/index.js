@@ -103,9 +103,9 @@ export const asyncRoutes = [
       meta: {
         title: '上传图书',
         icon: 'edit',
-        roles: ['admin'],
+        roles: ['admin']
         /* 一直显示tags-view  */
-        affix: true
+        // affix: true
       },
       /* 显示顶部 tags-view */
       name: 'bookCreate'
@@ -117,6 +117,7 @@ export const asyncRoutes = [
         icon: 'edit',
         roles: ['editor']
         // activeMenu: '/book/create' /* 设置默认高亮 */
+        // breadcrumb: false /* 面包屑导航不显示该项 */
       },
       /* 对应SidebarItem中的hidden，为true不展示 */
       hidden: false,

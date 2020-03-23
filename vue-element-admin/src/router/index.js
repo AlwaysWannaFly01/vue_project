@@ -103,8 +103,12 @@ export const asyncRoutes = [
       meta: {
         title: '上传图书',
         icon: 'edit',
-        roles: ['admin']
-      }
+        roles: ['admin'],
+        /* 一直显示tags-view  */
+        affix: true
+      },
+      /* 显示顶部 tags-view */
+      name: 'bookCreate'
     }, {
       path: '/book/list',
       component: () => import('@/views/book/create'),
@@ -115,7 +119,8 @@ export const asyncRoutes = [
         // activeMenu: '/book/create' /* 设置默认高亮 */
       },
       /* 对应SidebarItem中的hidden，为true不展示 */
-      hidden: false
+      hidden: false,
+      name: 'bookList'
     }]
   }
 ]

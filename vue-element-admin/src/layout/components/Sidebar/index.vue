@@ -45,6 +45,7 @@ export default {
     showLogo() {
       return this.$store.state.settings.sidebarLogo
     },
+    /* 定义 computed 将 styles 对象变成响应式对象 */
     variables() {
       return variables
     },

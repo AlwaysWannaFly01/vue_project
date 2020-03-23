@@ -94,7 +94,8 @@ export const asyncRoutes = [
     redirect: '/book/create',
     meta: { title: '图书管理', icon: 'documenttion', roles: ['admin', 'editor'] },
     children: [{
-      path: '/book/create',
+      path: 'http://www.baidu.com',
+      // path: '/book/create',
       component: () => import('@/views/book/create'),
       meta: {
         title: '上传图书',
@@ -109,7 +110,9 @@ export const asyncRoutes = [
         icon: 'edit',
         roles: ['editor']
         // activeMenu: '/book/create' /* 设置默认高亮 */
-      }
+      },
+      /* 对应SidebarItem中的hidden，为true不展示 */
+      hidden: true
     }]
   }
 ]

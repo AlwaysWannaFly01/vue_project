@@ -54,9 +54,9 @@
 
 <script>
 /* eslint-disable */
-
+import axios from 'axios';
 export default {
-    name: "app",
+    name: 'app',
     data() {
         // var userValidator = (rule, value, callback) => {
         //     if (value.length > 3) {
@@ -67,22 +67,60 @@ export default {
         // };
         return {
             data: {
-                user: "",
-                region: ""
+                user: '',
+                region: ''
             },
             rules: {
                 user: [
                     {
                         required: true,
-                        message: "请输入用户名",
-                        trigger: "blur"
+                        message: '请输入用户名',
+                        trigger: 'blur'
                     }
                     // { validator: userValidator, trigger: "blur" }
                 ]
             },
-            error: "",
-            status: ""
+            error: '',
+            status: ''
         };
+    },
+    created() {
+        const whiteUrl = ['/login'];
+        const url = '/book/home/v2';
+        const request = axios.create({
+            baseURL: 'https://test.youbaobao.xyz:18081',
+            timeout: 5000
+        });
+        /* 请求拦截器 */
+        request.interceptors.request.use(
+            config => {
+                console.log(config);
+                const url = config.url;
+                /* 若请求的地址包含在白名单中，不加token */
+                if (whiteUrl.some(item => (item === url))) {
+                    return config
+                }
+                throw new Error('ss')
+                /* 否则添加token */
+                config.headers['token']= 'abcd'
+                return config;
+            },
+            err => {
+                // console.log(err);
+                Promise.reject(err)
+            }
+        );
+        request({
+            url,
+            method: 'get',
+            params: {
+                openId: '1234'
+            }
+        }).then(response => {
+            console.log(response);
+        }).catch(err=>{
+            console.log(err);
+        })
     },
     methods: {
         /* eslint-disable */
@@ -93,9 +131,9 @@ export default {
                 console.log(err);
 
                 if (isValid) {
-                    alert("submit!");
+                    alert('submit!');
                 } else {
-                    console.log("error submit!!");
+                    console.log('error submit!!');
                     return false;
                 }
             });
@@ -105,26 +143,26 @@ export default {
                 if (value.length > 3) {
                     callback();
                 } else {
-                    callback(new Error("用户名长度必须大于3 "));
+                    callback(new Error('用户名长度必须大于3 '));
                 }
             };
             const newRule = [
                 ...this.rules.user,
-                { validator: userValidator, trigger: "blur" }
+                { validator: userValidator, trigger: 'blur' }
             ];
             this.rules = Object.assign({}, this.rules, { user: newRule });
         },
         showSuccess() {
-            this.status = "success";
-            this.error = "";
+            this.status = 'success';
+            this.error = '';
         },
         showError() {
-            this.status = "error";
-            this.error = "用户名输入有误";
+            this.status = 'error';
+            this.error = '用户名输入有误';
         },
         showValidating() {
-            this.status = "validating";
-            this.error = "";
+            this.status = 'validating';
+            this.error = '';
         }
     }
 };

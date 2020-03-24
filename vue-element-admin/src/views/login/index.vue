@@ -209,10 +209,12 @@ export default {
       });
     },
     getOtherQuery(query) {
+      /* 通过 reduce 过滤对象属性 */
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== "redirect") {
           acc[cur] = query[cur];
         }
+        console.log(acc, 'acc');
         return acc;
       }, {});
     }

@@ -85,7 +85,6 @@
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
 import SocialSign from "./components/SocialSignin";
 
 export default {
@@ -93,15 +92,15 @@ export default {
   components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
+      if (!value || value.length === 0) {
+        callback(new Error("请输入用户名"));
       } else {
         callback();
       }
     };
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
+      if (value.length < 4) {
+        callback(new Error("密码不能少于4位"));
       } else {
         callback();
       }
@@ -167,6 +166,8 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    /* @keyup.native="checkCapslock" 键盘按键时绑定 checkCapslock 事件 */
+    /* native 绑定到原生控件input上去 */
     checkCapslock(e) {
       const { key } = e;
       this.capsTooltip = key && key.length === 1 && key >= "A" && key <= "Z";
@@ -181,6 +182,7 @@ export default {
         this.$refs.password.focus();
       });
     },
+    /* @keyup.enter.native="handleLogin" 监听键盘 enter 按下后的事件 */
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {

@@ -1,7 +1,12 @@
 const express = require('express')
 const router = require('./router')
+const fs = require('fs')
+const https = require('https')
+const bodyParser = require('body-parser')
 
 const app = express()
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.json())
 
 app.use('/', router)
 // function myLogger(req, res, next) {
@@ -32,8 +37,19 @@ app.use('/', router)
 // app.post('/user', (req, res) => {
 //     res.send('hello node2')
 // })
+const privateKey = fs.readFileSync('./https/book_awyadmin.xyz.key');
+const pem = fs.readFileSync('./https/book_awyadmin.xyz.pem')
+const credentials = {
+    key: privateKey,
+    cert: pem
+}
+const httpsServer = https.createServer(credentials, app)
+const SSlPORT = 18082
 
 const server = app.listen(1224, () => {
     const { address, port } = server.address()
     console.log('HTTP启动成功-http://%s:%s', address, port);
+}) 
+httpsServer.listen(SSlPORT, ()=>{
+    console.log('HTTPS启动成功-https://localhost:%s', SSlPORT);
 })

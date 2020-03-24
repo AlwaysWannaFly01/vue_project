@@ -97,30 +97,42 @@ export default {
                 console.log(config);
                 const url = config.url;
                 /* 若请求的地址包含在白名单中，不加token */
-                if (whiteUrl.some(item => (item === url))) {
-                    return config
+                if (whiteUrl.some(item => item === url)) {
+                    return config;
                 }
-                throw new Error('ss')
                 /* 否则添加token */
-                config.headers['token']= 'abcd'
+                config.headers['token'] = 'abcd';
                 return config;
             },
             err => {
                 // console.log(err);
-                Promise.reject(err)
+                Promise.reject(err);
             }
+        );
+        request.interceptors.response.use(
+            response => {
+                console.log(response, 'response');
+                if (response.data && response.data.error_code === 0) {
+                    return response.data;
+                }else{
+                    Promise.reject(response.data.msg)
+                }
+            },
+            err => {}
         );
         request({
             url,
             method: 'get',
             params: {
-                openId: '1234'
+                // openId: '1234'
             }
-        }).then(response => {
-            console.log(response);
-        }).catch(err=>{
-            console.log(err);
         })
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     },
     methods: {
         /* eslint-disable */

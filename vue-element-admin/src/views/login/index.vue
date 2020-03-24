@@ -179,6 +179,7 @@ export default {
       } else {
         this.passwordType = "password";
       }
+      /* 点击显示密码，自动聚焦到密码输入框 */
       this.$nextTick(() => {
         this.$refs.password.focus();
       });

@@ -156,6 +156,7 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
+    /* 检查用户名或密码是否为空，如果发现为空，则自动聚焦 */
     if (this.loginForm.username === "") {
       this.$refs.username.focus();
     } else if (this.loginForm.password === "") {

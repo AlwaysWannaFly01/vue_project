@@ -7,6 +7,7 @@ const {
 class Result {
     constructor(data, msg = '操作成功', options) {
         this.data = null
+        // console.log(arguments, arguments.length);
         if (arguments.length === 0) {
             this.msg = '操作成功'
         } else if (arguments.length === 1) {
@@ -14,6 +15,7 @@ class Result {
         } else {
             this.data = data
             this.msg = msg
+            // console.log(this.data);
             if (options) {
                 this.options = options
             }
@@ -34,7 +36,7 @@ class Result {
         if (this.options) {
             base = { ...base, ...this.options }
         }
-        console.log(base)
+        console.log(base, 'base')
         return base
     }
 

@@ -1,7 +1,7 @@
 const express = require('express')
 const Result = require('../models/Result')
 const { login, findUser } = require('../services/user')
-const { md5 } = require('../utlis')
+const { md5, decoded } = require('../utlis')
 const { PWD_SALT } = require('../utlis/constant')
 const { body, validationResult } = require('express-validator')
 const boom = require('boom')
@@ -43,13 +43,21 @@ router.post(
 router.get('/info', (req, res, err) => {
     // res.json('userinfo...')
     // console.log(res,'res');
-    findUser('sam').then(user => {
-        console.log(user);
-        if (user) {
-            new Result(user, '用户信息查询成功').success(res)
-        } else {
-            new Result('用户信息查询失败').fail(res)
-        }
-    })
+    const decode = decoded(req)
+    console.log(decode, 'decode000');
+    if (decode && decode.username) {
+        findUser(decode.username).then(user => {
+            console.log(user);
+            if (user) {
+                user.roles = [user.role]
+                new Result(user, '用户信息查询成功').success(res)
+            } else {
+                new Result('用户信息查询失败').fail(res)
+            }
+        })
+    } else {
+        new Result('用户信息查询失败').fail(res)
+    }
+
 })
 module.exports = router

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Detail :is-edit="false" />
+    <Detail is-edit />
   </div>
 </template>
 

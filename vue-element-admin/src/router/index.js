@@ -110,11 +110,23 @@ export const asyncRoutes = [
       /* 显示顶部 tags-view */
       name: 'bookCreate'
     }, {
+      // path: 'http://www.baidu.com',
+      path: '/book/edit',
+      component: () => import('@/views/book/edit'),
+      meta: {
+        title: '编辑图书',
+        icon: 'edit',
+        roles: ['admin'],
+        activeMenu: '/book/list'
+      },
+      name: 'bookEdit',
+      hidden: true
+    }, {
       path: '/book/list',
       component: () => import('@/views/book/create'),
       meta: {
         title: '图书列表',
-        icon: 'edit',
+        icon: 'list',
         roles: ['editor']
         // activeMenu: '/book/create' /* 设置默认高亮 */
         // breadcrumb: false /* 面包屑导航不显示该项 */

@@ -12,7 +12,9 @@
     <div class="detail-container">
       <el-row>
         <Warning />
-        <el-col :span="24">2</el-col>
+        <el-col :span="24">
+          <EbookUpload />
+        </el-col>
         <el-col :span="24">2</el-col>
       </el-row>
     </div>
@@ -23,14 +25,15 @@
 /* eslint-disable */
 import Sticky from "@/components/Sticky";
 import Warning from "./Warning";
-
+import EbookUpload from "@/components/EbookUpload";
 export default {
   props: {
     isEdit: Boolean
   },
   components: {
     Sticky,
-    Warning
+    Warning,
+    EbookUpload
   },
   data() {
     return {

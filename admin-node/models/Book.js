@@ -1,5 +1,6 @@
 const { MIME_TYPE_EPUB, UPLOAD_URL, UPLOAD_PATH } = require('../utlis/constant')
 const fs = require('fs')
+const Epub = require('../utlis/epub')
 class Book {
     constructor(file, data) {
         if (file) {
@@ -45,7 +46,8 @@ class Book {
         this.author = ''//作者
         this.publisher = ''//出版社
         this.contents = [] //目录
-        this.cover = ''
+        this.cover = ''//封面图片url
+        this.coverPath = ''//封面图片路径
         this.category = -1
         this.categoryText = ''//分类名称
         this.language = ''
@@ -58,7 +60,58 @@ class Book {
     createBookFromDate(data) {
 
     }
+    parse(){
+        return new Promise((resolve,reject)=>{
+            const bookPath = `${UPLOAD_PATH}/${this.filePath}`
+            if(!fs.existsSync(bookPath)){
+                reject(new Error('电子书不存在'))
+            }
+            const epub = new Epub(bookPath)
+            epub.on('error', (err)=>{
+                reject(err)
+            })
+            epub.on('end', (err)=>{
+                if(err){
+                    reject(err)
+                }
+                console.log(epub.metadata ,'epub end')
+                const {
+                    language,
+                    creator,
+                    creatorFileAs,
+                    title,
+                    cover,
+                    publisher
+                } = epub.metadata
+                if(!title){
+                    reject(new Error('图书标题为空'))
+                }else{
+                    this.title = title
+                    this.language = language || 'en'
+                    this.author = creator || creatorFileAs|| 'unknow'
+                    this.publisher = publisher || 'unknow'
+                    this.rootFile = epub.rootFile
 
+                    const handleGetImage = (err,file,mimeType ) => {
+                        console.log(err, file, mimeType)
+                        if(err){
+                            reject(err)
+                        }
+                        const suffix = mimeType.split('/')[1]
+                        const coverPath = `${UPLOAD_PATH}/img/${this.fileName}.${suffix}`
+                        const coverUrl = `${UPLOAD_URL}/img/${this.fileName}.${suffix}`
+
+                        fs.writeFileSync(coverPath, file, 'binary')
+                        this.coverPath = `/img/${this.fileName}.${suffix}`
+                        this.cover = coverUrl
+                        resolve(this)
+                    }
+                    epub.getImage(cover, handleGetImage)
+                }
+            })
+            epub.parse()
+        })
+    }
 }
 
 module.exports = Book;

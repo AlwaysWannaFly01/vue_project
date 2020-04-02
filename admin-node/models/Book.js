@@ -91,26 +91,42 @@ class Book {
                     this.author = creator || creatorFileAs|| 'unknow'
                     this.publisher = publisher || 'unknow'
                     this.rootFile = epub.rootFile
+                    try{
+                        this.unzip()
+                        const handleGetImage = (err,file,mimeType ) => {
+                            console.log(err, file, mimeType)
+                            if(err){
+                                reject(err)
+                            }
+                            const suffix = mimeType.split('/')[1]
+                            const coverPath = `${UPLOAD_PATH}/img/${this.fileName}.${suffix}`
+                            const coverUrl = `${UPLOAD_URL}/img/${this.fileName}.${suffix}`
 
-                    const handleGetImage = (err,file,mimeType ) => {
-                        console.log(err, file, mimeType)
-                        if(err){
-                            reject(err)
+                            fs.writeFileSync(coverPath, file, 'binary')
+                            this.coverPath = `/img/${this.fileName}.${suffix}`
+                            this.cover = coverUrl
+                            resolve(this)
                         }
-                        const suffix = mimeType.split('/')[1]
-                        const coverPath = `${UPLOAD_PATH}/img/${this.fileName}.${suffix}`
-                        const coverUrl = `${UPLOAD_URL}/img/${this.fileName}.${suffix}`
-
-                        fs.writeFileSync(coverPath, file, 'binary')
-                        this.coverPath = `/img/${this.fileName}.${suffix}`
-                        this.cover = coverUrl
-                        resolve(this)
+                        epub.getImage(cover, handleGetImage)
+                    }catch(e){
+                        reject(e)
                     }
-                    epub.getImage(cover, handleGetImage)
+
                 }
             })
             epub.parse()
         })
+    }
+    unzip(){
+        const AdmZip = require('adm-zip')
+        const zip = new AdmZip(Book.genPath(this.path))
+        zip.extractAllTo(Book.genPath(this.unzipPath), true) // 解压后的文件夹路径，参数2为true，代表进行覆盖
+    }
+    static genPath(path) {
+        if(!path.startsWith('/')){
+            path = `/${path}`
+        }
+        return `${UPLOAD_PATH}/${path}`
     }
 }
 

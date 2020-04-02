@@ -53,7 +53,7 @@ class Book {
         this.categoryText = ''//分类名称
         this.language = ''
         this.unzipUrl = unzipUrl//解压后文件夹链接
-        this.originalname = originalname //文件原名
+        this.originalName = originalname //文件原名
 
 
     }
@@ -92,24 +92,26 @@ class Book {
                     this.author = creator || creatorFileAs || 'unknow'
                     this.publisher = publisher || 'unknow'
                     this.rootFile = epub.rootFile
+                    const handleGetImage = (err, file, mimeType) => {
+                        console.log(err, file, mimeType)
+                        if (err) {
+                            reject(err)
+                        }
+                        const suffix = mimeType.split('/')[1]
+                        const coverPath = `${UPLOAD_PATH}/img/${this.fileName}.${suffix}`
+                        const coverUrl = `${UPLOAD_URL}/img/${this.fileName}.${suffix}`
+
+                        fs.writeFileSync(coverPath, file, 'binary')
+                        this.coverPath = `/img/${this.fileName}.${suffix}`
+                        this.cover = coverUrl
+                        resolve(this)
+                    }
                     try {
                         this.unzip()
-                        this.parseContents(epub)
-                        const handleGetImage = (err, file, mimeType) => {
-                            console.log(err, file, mimeType)
-                            if (err) {
-                                reject(err)
-                            }
-                            const suffix = mimeType.split('/')[1]
-                            const coverPath = `${UPLOAD_PATH}/img/${this.fileName}.${suffix}`
-                            const coverUrl = `${UPLOAD_URL}/img/${this.fileName}.${suffix}`
-
-                            fs.writeFileSync(coverPath, file, 'binary')
-                            this.coverPath = `/img/${this.fileName}.${suffix}`
-                            this.cover = coverUrl
-                            resolve(this)
-                        }
-                        epub.getImage(cover, handleGetImage)
+                        this.parseContents(epub).then(({ chapters }) => {
+                            this.contents = chapters
+                            epub.getImage(cover, handleGetImage)
+                        })
                     } catch (e) {
                         reject(e)
                     }
@@ -146,13 +148,26 @@ class Book {
         const ncxFilePath = Book.genPath(`${this.unzipPath}/${getNcxFilePath()}`)
         // console.log('ncxFilePath00', ncxFilePath);
 
-        const findParent = (array) => {
+        const findParent = (array, level = 0, pid = '') => {
             return array.map(item => {
+                item.level = level
+                item.pid = pid
+                if (item.navPoint && item.navPoint.length > 0) {
+                    item.navPoint = findParent(item.navPoint, level + 1, item['$'].id)
+                } else if (item.navPoint) {
+                    item.navPoint.level = level + 1
+                    item.navPoint.pid = item['$'].id
+                }
                 return item
             })
         }
         const flatten = (array) => {
             return [].concat(...array.map(item => {
+                if (item.navPoint && item.navPoint.length > 0) {
+                    return [].concat(item, ...flatten(item.navPoint))
+                } else if (item.navPoint) {
+                    return [].concat(item, item.navPoint)
+                }
                 return item
             }))
         }
@@ -191,10 +206,14 @@ class Book {
                             chapter.navId = nav['$'].id
                             chapter.fileName = fileName
                             chapter.order = index + 1
+                            chapter.level = nav.level
+                            chapter.pid = nav.pid
+                            console.log('chapter', chapter);
+
                             chapters.push(chapter)
                         })
                         console.log('chapters00', chapters);
-
+                        resolve({ chapters })
                     } else {
                         reject(new Error('目录解析失败，目录数为0'))
                     }

@@ -74,7 +74,7 @@
             <el-col :span="12">
               <el-form-item :label-width="labelWidth" label="文件名称：">
                 <el-input
-                  v-model="postForm.fileName"
+                  v-model="postForm.originalName"
                   placeholder="文件名称"
                   style="width: 100%"
                   disabled
@@ -133,14 +133,7 @@ export default {
       postForm: {
         status: "deleted",
         // status: "draft",
-        language: "",
-        author: "",
-        publisher: "",
-        rootFile: "",
-        filePath: "",
-        unzipPath: "",
-        cover: "",
-        contents: []
+        ebook_uri: ""
       },
       fileList: [],
       labelWidth: "120px"
@@ -157,11 +150,46 @@ export default {
         this.loading = false;
       }, 1000);
     },
-    onUploadSuccess() {
-      console.log("onUploadSuccess");
+    onUploadSuccess(data) {
+      console.log("onUploadSuccess", data);
+      this.setData(data);
     },
     onUploadRemove() {
       console.log("onUploadRemove");
+    },
+    setData(data) {
+      debugger;
+      const {
+        title,
+        author,
+        publisher,
+        language,
+        rootFile,
+        cover,
+        url,
+        originalName,
+        contents,
+        fileName,
+        coverPath,
+        filePath,
+        unzipPath
+      } = data;
+      this.postForm = {
+        ...this.postForm,
+        title,
+        author,
+        publisher,
+        language,
+        rootFile,
+        cover,
+        url,
+        originalName,
+        contents,
+        fileName,
+        coverPath,
+        filePath,
+        unzipPath
+      };
     }
   }
 };

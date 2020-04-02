@@ -60,21 +60,21 @@ class Book {
     createBookFromDate(data) {
 
     }
-    parse(){
-        return new Promise((resolve,reject)=>{
+    parse() {
+        return new Promise((resolve, reject) => {
             const bookPath = `${UPLOAD_PATH}/${this.filePath}`
-            if(!fs.existsSync(bookPath)){
+            if (!fs.existsSync(bookPath)) {
                 reject(new Error('电子书不存在'))
             }
             const epub = new Epub(bookPath)
-            epub.on('error', (err)=>{
+            epub.on('error', (err) => {
                 reject(err)
             })
-            epub.on('end', (err)=>{
-                if(err){
+            epub.on('end', (err) => {
+                if (err) {
                     reject(err)
                 }
-                console.log(epub.metadata ,'epub end')
+                console.log(epub.metadata, 'epub end')
                 const {
                     language,
                     creator,
@@ -83,19 +83,20 @@ class Book {
                     cover,
                     publisher
                 } = epub.metadata
-                if(!title){
+                if (!title) {
                     reject(new Error('图书标题为空'))
-                }else{
+                } else {
                     this.title = title
                     this.language = language || 'en'
-                    this.author = creator || creatorFileAs|| 'unknow'
+                    this.author = creator || creatorFileAs || 'unknow'
                     this.publisher = publisher || 'unknow'
                     this.rootFile = epub.rootFile
-                    try{
+                    try {
                         this.unzip()
-                        const handleGetImage = (err,file,mimeType ) => {
+                        this.parseContents(epub)
+                        const handleGetImage = (err, file, mimeType) => {
                             console.log(err, file, mimeType)
-                            if(err){
+                            if (err) {
                                 reject(err)
                             }
                             const suffix = mimeType.split('/')[1]
@@ -108,7 +109,7 @@ class Book {
                             resolve(this)
                         }
                         epub.getImage(cover, handleGetImage)
-                    }catch(e){
+                    } catch (e) {
                         reject(e)
                     }
 
@@ -117,16 +118,39 @@ class Book {
             epub.parse()
         })
     }
-    unzip(){
+    unzip() {
         const AdmZip = require('adm-zip')
         const zip = new AdmZip(Book.genPath(this.path))
         zip.extractAllTo(Book.genPath(this.unzipPath), true) // 解压后的文件夹路径，参数2为true，代表进行覆盖
     }
     static genPath(path) {
-        if(!path.startsWith('/')){
+        if (!path.startsWith('/')) {
             path = `/${path}`
         }
-        return `${UPLOAD_PATH}/${path}`
+        return `${UPLOAD_PATH}${path}`
+    }
+    parseContents(epub) {
+        function getNcxFilePath() {
+            const spine = epub && epub.spine
+            const manifest = epub && epub.manifest
+            const ncx = spine.toc && spine.toc.href
+            const id = spine.toc && spine.toc.id
+            console.log('spine00', spine.toc, ncx, manifest[id].href);
+            if (ncx) {
+                return ncx
+            } else {
+                return manifest[id].href
+            }
+        }
+        const ncxFilePath = Book.genPath(`${this.unzipPath}/${getNcxFilePath()}`)
+        // console.log('ncxFilePath00', ncxFilePath);
+        if (fs.existsSync(ncxFilePath)) {
+            return new Promise((resolve, reject) => {
+                cosnt xml = fs.readFileSync(ncxFilePath, 'utf-8')
+            })
+        } else {
+            throw new Error('目录文件不存在')
+        }
     }
 }
 

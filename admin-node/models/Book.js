@@ -1,6 +1,7 @@
 const { MIME_TYPE_EPUB, UPLOAD_URL, UPLOAD_PATH } = require('../utlis/constant')
 const fs = require('fs')
 const Epub = require('../utlis/epub')
+const xml2js = require('xml2js').parseString
 class Book {
     constructor(file, data) {
         if (file) {
@@ -144,9 +145,60 @@ class Book {
         }
         const ncxFilePath = Book.genPath(`${this.unzipPath}/${getNcxFilePath()}`)
         // console.log('ncxFilePath00', ncxFilePath);
+
+        const findParent = (array) => {
+            return array.map(item => {
+                return item
+            })
+        }
+        const flatten = (array) => {
+            return [].concat(...array.map(item => {
+                return item
+            }))
+        }
         if (fs.existsSync(ncxFilePath)) {
             return new Promise((resolve, reject) => {
-                cosnt xml = fs.readFileSync(ncxFilePath, 'utf-8')
+                const xml = fs.readFileSync(ncxFilePath, 'utf-8')
+                const fileName = this.fileName
+                xml2js(xml, {
+                    explicitArray: false,
+                    ignoreAttrs: false
+                }, (err, json) => {
+                    if (err) {
+                        reject(err)
+                    }
+                    console.log('xml00', json);
+                    const navMap = json.ncx.navMap
+                    console.log('navMap00', JSON.stringify(navMap));
+                    if (navMap.navPoint && navMap.navPoint.length > 0) {
+                        navMap.navPoint = findParent(navMap.navPoint)
+                        const newNavMap = flatten(navMap.navPoint)
+                        // console.log(newNavMap === navMap.navPoint);
+                        const chapters = []
+                        console.log(epub.flow);
+                        epub.flow.forEach((chapter, index) => {
+                            if (index + 1 > newNavMap.length) {
+                                return
+                            }
+                            const nav = newNavMap[index]
+                            chapter.text = `${UPLOAD_URL}/unzip/${fileName}/${chapter.href}`
+                            console.log('chapter.text', chapter.text);
+                            if (nav && nav.navLabel) {
+                                chapter.label = nav.navLabel.text
+                            } else {
+                                chapter.label = ''
+                            }
+                            chapter.navId = nav['$'].id
+                            chapter.fileName = fileName
+                            chapter.order = index + 1
+                            chapters.push(chapter)
+                        })
+                        console.log('chapters00', chapters);
+
+                    } else {
+                        reject(new Error('目录解析失败，目录数为0'))
+                    }
+                })
             })
         } else {
             throw new Error('目录文件不存在')

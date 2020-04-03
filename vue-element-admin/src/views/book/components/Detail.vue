@@ -136,7 +136,8 @@ export default {
         ebook_uri: ""
       },
       fileList: [],
-      labelWidth: "120px"
+      labelWidth: "120px",
+      contentsTree: []
     };
   },
   methods: {
@@ -158,7 +159,7 @@ export default {
       console.log("onUploadRemove");
     },
     setData(data) {
-      debugger;
+      debugger
       const {
         title,
         author,
@@ -169,6 +170,7 @@ export default {
         url,
         originalName,
         contents,
+        contentsTree,
         fileName,
         coverPath,
         filePath,
@@ -190,6 +192,10 @@ export default {
         filePath,
         unzipPath
       };
+      this.contentsTree = contentsTree
+    },
+    onContentClick() {
+      console.log(123);
     }
   }
 };

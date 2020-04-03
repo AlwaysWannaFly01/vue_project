@@ -108,8 +108,9 @@ class Book {
                     }
                     try {
                         this.unzip()
-                        this.parseContents(epub).then(({ chapters }) => {
+                        this.parseContents(epub).then(({ chapters, chapterTree }) => {
                             this.contents = chapters
+                            this.contentsTree = chapterTree
                             epub.getImage(cover, handleGetImage)
                         })
                     } catch (e) {
@@ -138,7 +139,7 @@ class Book {
             const manifest = epub && epub.manifest
             const ncx = spine.toc && spine.toc.href
             const id = spine.toc && spine.toc.id
-            console.log('spine00', spine.toc, ncx, manifest[id].href);
+            // console.log('spine00', spine.toc, ncx, manifest[id].href);
             if (ncx) {
                 return ncx
             } else {
@@ -197,7 +198,7 @@ class Book {
                             }
                             const nav = newNavMap[index]
                             chapter.text = `${UPLOAD_URL}/unzip/${fileName}/${chapter.href}`
-                            console.log('chapter.text', chapter.text);
+                            // console.log('chapter.text', chapter.text);
                             if (nav && nav.navLabel) {
                                 chapter.label = nav.navLabel.text
                             } else {
@@ -208,12 +209,25 @@ class Book {
                             chapter.order = index + 1
                             chapter.level = nav.level
                             chapter.pid = nav.pid
-                            console.log('chapter', chapter);
+                            // console.log('chapter', chapter);
 
                             chapters.push(chapter)
                         })
+                        const chapterTree = []
+                        chapters.forEach(c => {
+                            c.children = []
+                            if (c.pid === '') {
+                                chapterTree.push(c)
+                            } else {
+                                const parent = chapters.find(_ => _.navId === c.pid)
+                                console.log(parent, 'parent');
+                                parent.children.push(c)
+                            }
+                        })
                         console.log('chapters00', chapters);
-                        resolve({ chapters })
+                        console.log('chapterTree00', chapterTree);
+
+                        resolve({ chapters, chapterTree })
                     } else {
                         reject(new Error('目录解析失败，目录数为0'))
                     }

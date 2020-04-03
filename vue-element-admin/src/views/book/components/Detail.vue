@@ -194,8 +194,11 @@ export default {
       };
       this.contentsTree = contentsTree
     },
-    onContentClick() {
-      console.log(123);
+    onContentClick(data) {
+      console.log(data);
+      if(data.text){
+        window.open(data.text)
+      }
     }
   }
 };

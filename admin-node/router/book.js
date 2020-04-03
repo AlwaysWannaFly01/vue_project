@@ -17,7 +17,7 @@ router.post(
             // console.log(book)
             book.parse()
                 .then(book => {
-                    console.log(book, 'book-upload-success')
+                    // console.log(book, 'book-upload-success')
                     new Result(book, '上传电子书成功').success(res)
                 }
                 ).catch(err => {

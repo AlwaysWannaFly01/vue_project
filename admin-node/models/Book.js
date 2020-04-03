@@ -2,6 +2,7 @@ const { MIME_TYPE_EPUB, UPLOAD_URL, UPLOAD_PATH } = require('../utlis/constant')
 const fs = require('fs')
 const Epub = require('../utlis/epub')
 const xml2js = require('xml2js').parseString
+const path = require('path')
 class Book {
     constructor(file, data) {
         if (file) {
@@ -175,6 +176,9 @@ class Book {
         if (fs.existsSync(ncxFilePath)) {
             return new Promise((resolve, reject) => {
                 const xml = fs.readFileSync(ncxFilePath, 'utf-8')
+                const dir = path.dirname(ncxFilePath).replace(UPLOAD_PATH, '')
+                console.log('dir', dir);
+
                 const fileName = this.fileName
                 xml2js(xml, {
                     explicitArray: false,
@@ -191,24 +195,33 @@ class Book {
                         const newNavMap = flatten(navMap.navPoint)
                         // console.log(newNavMap === navMap.navPoint);
                         const chapters = []
-                        console.log(epub.flow);
-                        epub.flow.forEach((chapter, index) => {
-                            if (index + 1 > newNavMap.length) {
-                                return
-                            }
-                            const nav = newNavMap[index]
-                            chapter.text = `${UPLOAD_URL}/unzip/${fileName}/${chapter.href}`
+                        console.log('nav00', newNavMap[0].content['$']);
+                        console.log(newNavMap.length, epub.flow.length);
+
+                        // console.log(epub.flow);
+                        // epub.flow.forEach((chapter, index) => {
+                        newNavMap.forEach((chapter, index) => {
+                            // if (index + 1 > newNavMap.length) {
+                            //     return
+                            // }
+                            // const nav = newNavMap[index]
+                            console.log('chapter00', chapter);
+
+                            const src = chapter.content['$'].src
+                            chapter.text = `${UPLOAD_URL}${dir}/${src}`
                             // console.log('chapter.text', chapter.text);
-                            if (nav && nav.navLabel) {
-                                chapter.label = nav.navLabel.text
-                            } else {
-                                chapter.label = ''
-                            }
-                            chapter.navId = nav['$'].id
+
+                            // if (nav && nav.navLabel) {
+                            //     chapter.label = nav.navLabel.text
+                            // } else {
+                            //     chapter.label = ''
+                            // }
+                            chapter.label = chapter.navLabel.text || ''
+                            chapter.navId = chapter['$'].id
                             chapter.fileName = fileName
                             chapter.order = index + 1
-                            chapter.level = nav.level
-                            chapter.pid = nav.pid
+                            // chapter.level = nav.level
+                            // chapter.pid = nav.pid
                             // console.log('chapter', chapter);
 
                             chapters.push(chapter)
@@ -220,12 +233,12 @@ class Book {
                                 chapterTree.push(c)
                             } else {
                                 const parent = chapters.find(_ => _.navId === c.pid)
-                                console.log(parent, 'parent');
+                                // console.log(parent, 'parent');
                                 parent.children.push(c)
                             }
                         })
-                        console.log('chapters00', chapters);
-                        console.log('chapterTree00', chapterTree);
+                        // console.log('chapters00', chapters);
+                        // console.log('chapterTree00', chapterTree);
 
                         resolve({ chapters, chapterTree })
                     } else {

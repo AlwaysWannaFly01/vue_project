@@ -117,6 +117,21 @@ import Sticky from "@/components/Sticky";
 import Warning from "./Warning";
 import EbookUpload from "@/components/EbookUpload";
 import MdInput from "@/components/MDinput";
+const defaultForm = {
+  title: "",
+  author: "",
+  publisher: "",
+  language: "",
+  rootFile: "",
+  cover: "",
+  url: "",
+  originalName: "",
+  contents: [],
+  fileName: "",
+  coverPath: "",
+  filePath: "",
+  unzipPath: ""
+};
 export default {
   props: {
     isEdit: Boolean
@@ -157,9 +172,10 @@ export default {
     },
     onUploadRemove() {
       console.log("onUploadRemove");
+      this.setDefault();
     },
     setData(data) {
-      debugger
+      debugger;
       const {
         title,
         author,
@@ -192,13 +208,17 @@ export default {
         filePath,
         unzipPath
       };
-      this.contentsTree = contentsTree
+      this.contentsTree = contentsTree;
     },
     onContentClick(data) {
       console.log(data);
-      if(data.text){
-        window.open(data.text)
+      if (data.text) {
+        window.open(data.text);
       }
+    },
+    setDefault() {
+      this.postForm = Object.assign({}, defaultForm);
+      this.contentsTree = [];
     }
   }
 };

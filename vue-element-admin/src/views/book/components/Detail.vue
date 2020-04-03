@@ -1,5 +1,6 @@
 <template>
-  <el-form ref="postForm" v-model="postForm">
+  <el-form ref="postForm" :model="postForm" :rules="rules">
+    <!-- 不能写成 v-model的形式，要写:model;否则表单验证不生效 -->
     <Sticky :class-name="'sub-navbar ' + postForm.status">
       <el-button v-if="!isEdit" @click="showGuide">显示帮助</el-button>
       <el-button
@@ -26,19 +27,19 @@
           </el-form-item>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="作者：" :label-width="labelWidth">
+              <el-form-item prop="author" label="作者：" :label-width="labelWidth">
                 <el-input v-model="postForm.author" placeholder="作者" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="出版社：" :label-width="labelWidth">
+              <el-form-item prop="publisher" label="出版社：" :label-width="labelWidth">
                 <el-input v-model="postForm.publisher" placeholder="出版社" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="语言：" :label-width="labelWidth">
+              <el-form-item prop="language" label="语言：" :label-width="labelWidth">
                 <el-input v-model="postForm.language" placeholder="语言" />
               </el-form-item>
             </el-col>
@@ -132,6 +133,12 @@ const defaultForm = {
   filePath: "",
   unzipPath: ""
 };
+const fields = {
+  title: "书名",
+  author: "作者",
+  publisher: "出版社",
+  language: "语言"
+};
 export default {
   props: {
     isEdit: Boolean
@@ -143,16 +150,33 @@ export default {
     MdInput
   },
   data() {
+    const validateRequire = (rule, value, callback) => {
+      if (value.length === 0) {
+        callback(new Error(fields[rule.field] + "必须填写"));
+      } else {
+        callback();
+      }
+    };
     return {
       loading: false,
       postForm: {
         status: "deleted",
         // status: "draft",
-        ebook_uri: ""
+        ebook_uri: "",
+        title: "",
+        author: "",
+        publisher: "",
+        language: ""
       },
       fileList: [],
       labelWidth: "120px",
-      contentsTree: []
+      contentsTree: [],
+      rules: {
+        title: [{ validator: validateRequire }],
+        author: [{ validator: validateRequire }],
+        language: [{ validator: validateRequire }],
+        publisher: [{ validator: validateRequire }]
+      }
     };
   },
   methods: {
@@ -161,10 +185,22 @@ export default {
     },
     submitForm() {
       console.log("submitForm");
-      this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
-      }, 1000);
+      if (!this.loading) {
+        this.loading = true;
+        this.$refs.postForm.validate((valid, fields) => {
+          console.log(valid, fields);
+          if (valid) {
+            console.log(this.postForm);
+          } else {
+            const message = fields[Object.keys(fields)[0]][0].message;
+            this.$message({
+              message,
+              type: "error"
+            });
+            this.loading = false;
+          }
+        });
+      }
     },
     onUploadSuccess(data) {
       console.log("onUploadSuccess", data);
@@ -175,7 +211,7 @@ export default {
       this.setDefault();
     },
     setData(data) {
-      debugger;
+      // debugger;
       const {
         title,
         author,

@@ -62,7 +62,7 @@ export default {
     },
     onSuccess(response, file) {
       console.log(response, file);
-      debugger;
+      // debugger;
       const { code, msg, data } = response;
       if (code === 0) {
         this.$message({

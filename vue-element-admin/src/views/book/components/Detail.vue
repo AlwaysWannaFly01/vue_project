@@ -118,6 +118,7 @@ import Sticky from "@/components/Sticky";
 import Warning from "./Warning";
 import EbookUpload from "@/components/EbookUpload";
 import MdInput from "@/components/MDinput";
+import { createBook } from "@/api/book";
 const defaultForm = {
   title: "",
   author: "",
@@ -162,7 +163,6 @@ export default {
       postForm: {
         status: "deleted",
         // status: "draft",
-        ebook_uri: "",
         title: "",
         author: "",
         publisher: "",
@@ -191,6 +191,17 @@ export default {
           console.log(valid, fields);
           if (valid) {
             console.log(this.postForm);
+            // const book = {...this.postForm}
+            /* 前拷贝 */
+            const book = Object.assign({}, this.postForm);
+            /* 将无用的字段删除 */
+            delete book.contents;
+            console.log(book);
+            if (!this.isEdit) {
+              createBook(book);
+            } else {
+              // updateBook(book)
+            }
           } else {
             const message = fields[Object.keys(fields)[0]][0].message;
             this.$message({

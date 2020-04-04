@@ -60,7 +60,27 @@ class Book {
     }
 
     createBookFromDate(data) {
-
+        console.log(data,'555');
+        
+        this.filename = data.fileName
+        this.cover = data.cover
+        this.originalName = data.originalName
+        this.publisher = data.publisher
+        this.bookId = data.fileName
+        this.language = data.language
+        this.author = data.author
+        this.title = data.title
+        this.rootFile = data.rootFile
+        this.path = data.path || data.filePath
+        this.filePath = data.path || data.filePath
+        this.unzipPath = data.unzipPath
+        this.coverPath = data.coverPath
+        this.createUser = data.username
+        this.createDt = new Date().getTime()
+        this.updateDt = new Date().getTime()
+        this.updateType = data.updateType === 0 ? data.updateType : 1
+        this.category = data.category || 99
+        this.categoryText = data.categoryText || '自定义'
     }
     parse() {
         return new Promise((resolve, reject) => {
@@ -248,6 +268,29 @@ class Book {
             })
         } else {
             throw new Error('目录文件不存在')
+        }
+    }
+    toDb() {
+        return {
+            fileName :this.filename,
+            cover :this.cover,
+            originalName :this.originalName,
+            publisher :this.publisher,
+            bookId :this.filename,
+            language :this.language,
+            author :this.author,
+            title :this.title,
+            rootFile :this.rootFile,
+            // path :this.path,
+            filePath :this.path,
+            unzipPath :this.unzipPath,
+            coverPath :this.coverPath,
+            createUser :this.createUser,
+            createDt :this.createDt,
+            updateDt :this.updateDt,
+            updateType :this.updateType,
+            category :this.category,
+            categoryText :this.categoryText
         }
     }
 }

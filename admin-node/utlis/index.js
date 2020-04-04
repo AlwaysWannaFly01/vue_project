@@ -15,7 +15,14 @@ const decoded = (req) => {
     console.log(token, 'token111');
     return jwt.verify(token, PRIVATE_KEY)
 }
+/* 判断是否为一个对象 */
+const isObject = (o) => {
+    // console.log(o, 'o');
+    // console.log(Object.prototype.toString.call(o) === '[object Object]');
+    return Object.prototype.toString.call(o) === '[object Object]'
+}
 module.exports = {
     md5,
-    decoded
+    decoded,
+    isObject
 }

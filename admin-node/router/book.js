@@ -4,6 +4,8 @@ const multer = require('multer')
 const Result = require('../models/Result')
 const Book = require('../models/Book')
 const { UPLOAD_PATH } = require('../utlis/constant')
+const { decoded } = require('../utlis')
+const { insertBook } = require('../services/book')
 const boom = require('boom')
 const router = express.Router()
 router.post(
@@ -26,4 +28,22 @@ router.post(
                 })
         }
     })
+router.post('/create', (req, res, next) => {
+    const decode = decoded(req)
+    console.log(decode);
+    console.log(req.body);
+    if (decode && decode.username) {
+        req.body.username = decode.username
+    }
+    // console.log(req.body,'776');
+    
+    const book = new Book(null, req.body)
+    // console.log(book, 'book99');
+    // const book = {}
+    insertBook(book).then((res) => {
+        console.log(res);
+    }).catch(err => {
+        next(boom.badImplementation(err))
+    })
+})
 module.exports = router

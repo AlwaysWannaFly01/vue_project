@@ -1,8 +1,8 @@
 const mysql = require('mysql')
 const config = require('./config')
 const { debug } = require('../utlis/constant')
-
-function connect() {
+const { isObject } = require('../utlis')
+const connect = () => {
     return mysql.createConnection({
         host: config.host,
         user: config.user,
@@ -45,8 +45,47 @@ const queryOne = (sql) => {
         })
     })
 }
+const insert = (model, tablename) => {
+    return new Promise((resolve, reject) => {
+        console.log(model, 'model00');
+        if (!isObject(model)) {
+            reject(new Error('插入数据库失败，插入数据非对象'))
+        }
+        const keys = []
+        const values = []
+        Object.keys(model).forEach((key) => {
+            if (model.hasOwnProperty(key)) {
+                keys.push(`\`${key}\``)
+                values.push(`'${model[key]}'`)
+            }
+        })
+        if (keys.length > 0 && values.length > 0) {
+            let sql = `INSERT INTO \`${tablename}\`(`
+            const keysString = keys.join(',')
+            const valuesString = values.join(',')
+            sql = `${sql}${keysString}) Values (${valuesString})`
+            // debug && console.log('插入语句', sql)
+            console.log(sql, 'sql语句');
+            const conn = connect()
+            try {
+                conn.query(sql, (err, result) => {
+                    if (err) {
+                        reject(err)
+                    }
+                    resolve(result)
+                })
+            } catch (e) {
+                reject(e)
+            }
+        } else {
+            reject(new Error('插入数据库失败，对象中没有任何属性！'))
+        }
+    })
+
+}
 module.exports = {
     connect,
     querySql,
-    queryOne
+    queryOne,
+    insert
 }

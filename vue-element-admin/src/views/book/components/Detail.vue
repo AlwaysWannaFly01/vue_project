@@ -44,26 +44,26 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="根文件：" :label-width="labelWidth">
+              <el-form-item prop="rootFile" label="根文件：" :label-width="labelWidth">
                 <el-input v-model="postForm.rootFile" placeholder="根文件" disabled />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="文件路径：" :label-width="labelWidth">
+              <el-form-item prop="filePath" label="文件路径：" :label-width="labelWidth">
                 <el-input v-model="postForm.filePath" placeholder="文件路径" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="解压路径：" :label-width="labelWidth">
+              <el-form-item prop="unzipPath" label="解压路径：" :label-width="labelWidth">
                 <el-input v-model="postForm.unzipPath" placeholder="解压路径" disabled />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item :label-width="labelWidth" label="封面路径：">
+              <el-form-item prop="coverPath" :label-width="labelWidth" label="封面路径：">
                 <el-input
                   v-model="postForm.coverPath"
                   placeholder="封面路径"
@@ -73,7 +73,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item :label-width="labelWidth" label="文件名称：">
+              <el-form-item prop="originalName" :label-width="labelWidth" label="文件名称：">
                 <el-input
                   v-model="postForm.originalName"
                   placeholder="文件名称"
@@ -85,7 +85,7 @@
           </el-row>
           <el-row>
             <el-col :span="24">
-              <el-form-item :label-width="labelWidth" label="封面：">
+              <el-form-item prop="cover" :label-width="labelWidth" label="封面：">
                 <a v-if="postForm.cover" :href="postForm.cover" target="_blank">
                   <img :src="postForm.cover" class="preview-img">
                 </a>
@@ -119,21 +119,21 @@ import Warning from "./Warning";
 import EbookUpload from "@/components/EbookUpload";
 import MdInput from "@/components/MDinput";
 import { createBook } from "@/api/book";
-const defaultForm = {
-  title: "",
-  author: "",
-  publisher: "",
-  language: "",
-  rootFile: "",
-  cover: "",
-  url: "",
-  originalName: "",
-  contents: [],
-  fileName: "",
-  coverPath: "",
-  filePath: "",
-  unzipPath: ""
-};
+// const defaultForm = {
+//   title: "",
+//   author: "",
+//   publisher: "",
+//   language: "",
+//   rootFile: "",
+//   cover: "",
+//   url: "",
+//   originalName: "",
+//   contents: [],
+//   fileName: "",
+//   coverPath: "",
+//   filePath: "",
+//   unzipPath: ""
+// };
 const fields = {
   title: "书名",
   author: "作者",
@@ -198,7 +198,23 @@ export default {
             delete book.contents;
             console.log(book);
             if (!this.isEdit) {
-              createBook(book);
+              createBook(book)
+                .then(res => {
+                  console.log(res);
+                  const { msg } = res;
+                  this.$notify({
+                    title: "操作成功",
+                    message: msg,
+                    type: "success",
+                    duration: 2000
+                  });
+                  this.loading = false;
+                  this.setDefault();
+                })
+                .catch(err => {
+                  this.loading = false;
+                  console.log(err);
+                });
             } else {
               // updateBook(book)
             }
@@ -264,8 +280,10 @@ export default {
       }
     },
     setDefault() {
-      this.postForm = Object.assign({}, defaultForm);
+      // this.postForm = Object.assign({}, defaultForm);
       this.contentsTree = [];
+      this.fileList = [];
+      this.$refs.postForm.resetFields()
     }
   }
 };

@@ -35,13 +35,11 @@ router.post('/create', (req, res, next) => {
     if (decode && decode.username) {
         req.body.username = decode.username
     }
-    // console.log(req.body,'776');
-    
     const book = new Book(null, req.body)
     // console.log(book, 'book99');
     // const book = {}
-    insertBook(book).then((res) => {
-        console.log(res);
+    insertBook(book).then(() => {
+        new Result('添加电子书成功').success(res)
     }).catch(err => {
         next(boom.badImplementation(err))
     })

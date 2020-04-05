@@ -60,8 +60,6 @@ class Book {
     }
 
     createBookFromDate(data) {
-        console.log(data,'555');
-        
         this.filename = data.fileName
         this.cover = data.cover
         this.originalName = data.originalName
@@ -81,6 +79,7 @@ class Book {
         this.updateType = data.updateType === 0 ? data.updateType : 1
         this.category = data.category || 99
         this.categoryText = data.categoryText || '自定义'
+        this.contents = data.contents || []
     }
     parse() {
         return new Promise((resolve, reject) => {
@@ -236,6 +235,8 @@ class Book {
                             // } else {
                             //     chapter.label = ''
                             // }
+                            chapter.id = `${src}`
+                            chapter.href = `${dir}/${src}`.replace(this.unzipPath, '')
                             chapter.label = chapter.navLabel.text || ''
                             chapter.navId = chapter['$'].id
                             chapter.fileName = fileName
@@ -272,26 +273,29 @@ class Book {
     }
     toDb() {
         return {
-            fileName :this.filename,
-            cover :this.cover,
-            originalName :this.originalName,
-            publisher :this.publisher,
-            bookId :this.filename,
-            language :this.language,
-            author :this.author,
-            title :this.title,
-            rootFile :this.rootFile,
+            fileName: this.filename,
+            cover: this.cover,
+            originalName: this.originalName,
+            publisher: this.publisher,
+            bookId: this.filename,
+            language: this.language,
+            author: this.author,
+            title: this.title,
+            rootFile: this.rootFile,
             // path :this.path,
-            filePath :this.path,
-            unzipPath :this.unzipPath,
-            coverPath :this.coverPath,
-            createUser :this.createUser,
-            createDt :this.createDt,
-            updateDt :this.updateDt,
-            updateType :this.updateType,
-            category :this.category,
-            categoryText :this.categoryText
+            filePath: this.path,
+            unzipPath: this.unzipPath,
+            coverPath: this.coverPath,
+            createUser: this.createUser,
+            createDt: this.createDt,
+            updateDt: this.updateDt,
+            updateType: this.updateType,
+            category: this.category,
+            categoryText: this.categoryText
         }
+    }
+    getContents() {
+        return this.contents
     }
 }
 

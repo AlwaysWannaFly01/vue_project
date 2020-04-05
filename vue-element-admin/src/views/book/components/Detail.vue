@@ -195,7 +195,7 @@ export default {
             /* 前拷贝 */
             const book = Object.assign({}, this.postForm);
             /* 将无用的字段删除 */
-            delete book.contents;
+            // delete book.contents;
             console.log(book);
             if (!this.isEdit) {
               createBook(book)

@@ -2,10 +2,22 @@ const Book = require('../models/Book')
 const db = require('../db')
 const _ = require('lodash')
 const exists = (book) => {
-    return false
+    const { title, author, publisher } = book
+    const sql = `SELECT * FROM book where title = '${title}' and author = '${author}' and publisher = '${publisher}'`
+    return db.queryOne(sql)
+    // return false
 }
-const removeBook = (book) => {
-
+const removeBook = async (book) => {
+    if (book) {
+        book.reset()
+        console.log(book, 'fileName33');
+        if (book.filename) {
+            const removeBookSql = `delete from book where fileName = '${book.filename}'`
+            const removeContentSql = `delete from contents where fileName = '${book.filename}'`
+            await db.queryOne(removeBookSql)
+            await db.queryOne(removeContentSql)
+        }
+    }
 }
 
 const insertContents = async (book) => {

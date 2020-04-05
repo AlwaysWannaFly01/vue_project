@@ -153,6 +153,28 @@ class Book {
         }
         return `${UPLOAD_PATH}${path}`
     }
+    static pathExists(path) {
+        if (path.startsWith(UPLOAD_PATH)) {
+            return fs.existsSync(path)
+        } else {
+            return fs.existsSync(Book.genPath(path))
+        }
+    }
+    reset() {
+        console.log(this.filename);
+        if (Book.pathExists(this.filePath)) {
+            fs.unlinkSync(Book.genPath(this.filePath))
+            console.log('删除文件');
+        }
+        if (Book.pathExists(this.coverPath)) {
+            fs.unlinkSync(Book.genPath(this.coverPath))
+            console.log('删除封面');
+        }
+        if (Book.pathExists(this.unzipPath)) {
+            fs.rmdirSync(Book.genPath(this.unzipPath), { recursive: true })
+            console.log('删除解压目录');
+        }
+    }
     parseContents(epub) {
         function getNcxFilePath() {
             const spine = epub && epub.spine

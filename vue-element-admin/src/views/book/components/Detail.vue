@@ -209,7 +209,7 @@ export default {
                     duration: 2000
                   });
                   this.loading = false;
-                  this.setDefault();
+                  // this.setDefault();
                 })
                 .catch(err => {
                   this.loading = false;

@@ -1,5 +1,8 @@
 const { env } = require('./env')
-const UPLOAD_PATH = env === 'dev' ? '/Users/alwayswannafly/upload/admin-upload-ebook' : ''
+// const UPLOAD_PATH = env === 'dev' ? '/Users/alwayswannafly/upload/admin-upload-ebook' : ''
+
+/* 在windows电脑使用该地址 */
+const UPLOAD_PATH = env === 'dev' ? 'E:/AwyNginxConfig/AlwaysWannaFly/upload/admin-upload-ebook' : ''
 const UPLOAD_URL = env === 'dev' ? 'https://awyadmin.xyz/admin-upload-ebook' : ''
 
 module.exports = {

@@ -164,7 +164,7 @@ class Book {
         console.log('旧电子书地址', book);
         const { cover } = book
         // console.log('cover3', cover);
-        if (book.updateType === '0') {
+        if (+book.updateType === 0) {
             if (cover) {
                 if (cover.startsWith('/')) {
                     return `${OLD_UPLOAD_URL}/${cover}`

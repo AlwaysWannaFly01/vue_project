@@ -188,6 +188,16 @@ export default {
       console.log("show guide");
     },
     submitForm() {
+      const onSuccess = response => {
+        const { msg } = response;
+        this.$notify({
+          title: "操作成功",
+          message: msg,
+          type: "success",
+          duration: 2000
+        });
+        this.loading = false;
+      };
       console.log("submitForm");
       if (!this.loading) {
         this.loading = true;
@@ -205,24 +215,23 @@ export default {
               createBook(book)
                 .then(res => {
                   console.log(res);
-                  const { msg } = res;
-                  this.$notify({
-                    title: "操作成功",
-                    message: msg,
-                    type: "success",
-                    duration: 2000
-                  });
-                  this.loading = false;
-                  // this.setDefault();
+                  onSuccess(res);
+                  this.setDefault();
                 })
                 .catch(err => {
                   this.loading = false;
                   console.log(err);
                 });
             } else {
-              updateBook(book).then(response => {
-                console.log(response);
-              });
+              updateBook(book)
+                .then(response => {
+                  console.log(response);
+                  onSuccess(response);
+                })
+                .catch(err => {
+                  this.loading = false;
+                  console.log(err);
+                });
             }
           } else {
             const message = fields[Object.keys(fields)[0]][0].message;
@@ -279,7 +288,7 @@ export default {
       };
       console.log(contentsTree);
       this.contentsTree = contentsTree;
-      this.fileList = [{ name: originalName, url }];
+      this.fileList = [{ name: originalName || fileName, url }];
     },
     onContentClick(data) {
       console.log(data);

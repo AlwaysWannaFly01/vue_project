@@ -58,16 +58,18 @@ router.get('/get', (req, res, next) => {
 
 })
 
-// router.post('/update', (req, res, next) => {
-//     const decode = decoded(req)
-//     if (decode && decode.username) {
-//         req.body.username = decode.username
-//     }
-//     const book = new Book(null, req.body)
-//     bookService.updateBook(book).then(() => {
-//         new Result('更新电子书成功').success(res)
-//     }).catch(err => {
-//         next(boom.badImplementation(err))
-//     })
-// })
+router.post('/update', (req, res, next) => {
+    const decode = decoded(req)
+    if (decode && decode.username) {
+        req.body.username = decode.username
+    }
+    console.log('req111',req.body);
+    
+    const book = new Book(null, req.body)
+    bookService.updateBook(book).then(() => {
+        new Result('更新电子书成功').success(res)
+    }).catch(err => {
+        next(boom.badImplementation(err))
+    })
+})
 module.exports = router

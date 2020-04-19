@@ -1,4 +1,4 @@
-const { MIME_TYPE_EPUB, UPLOAD_URL, UPLOAD_PATH } = require('../utlis/constant')
+const { MIME_TYPE_EPUB, UPLOAD_URL, UPLOAD_PATH, OLD_UPLOAD_URL } = require('../utlis/constant')
 const fs = require('fs')
 const Epub = require('../utlis/epub')
 const xml2js = require('xml2js').parseString
@@ -160,6 +160,50 @@ class Book {
             return fs.existsSync(Book.genPath(path))
         }
     }
+    static genCoverUrl(book) {
+        console.log('旧电子书地址', book);
+        const { cover } = book
+        // console.log('cover3', cover);
+        if (book.updateType === '0') {
+            if (cover) {
+                if (cover.startsWith('/')) {
+                    return `${OLD_UPLOAD_URL}/${cover}`
+                } else {
+                    return `${OLD_UPLOAD_URL}/${cover}`
+                }
+            } else {
+                return null
+            }
+        } else {
+            if (cover) {
+                if (cover.startsWith('/')) {
+                    return `${UPLOAD_URL}/${cover}`
+                } else {
+                    return cover
+                }
+            } else {
+                return null
+            }
+        }
+    }
+    static genContentsTree(contents) {
+        // console.log('contents', contents);
+        if (contents) {
+            const contentsTree = []
+            contents.forEach(c => {
+                c.children = []
+                if (c.pid === '') {
+                    contentsTree.push(c)
+                } else {
+                    const parent = contents.find(_ => _.navId === c.pid)
+                    // console.log(parent, 'parent');
+                    parent.children.push(c)
+                }
+            })
+            // console.log('contentsTree897',contentsTree);
+            return contentsTree
+        }
+    }
     reset() {
         console.log(this.filename);
         if (Book.pathExists(this.filePath)) {
@@ -171,6 +215,7 @@ class Book {
             console.log('删除封面');
         }
         if (Book.pathExists(this.unzipPath)) {
+            //recursive 属性,低版本node不支持
             fs.rmdirSync(Book.genPath(this.unzipPath), { recursive: true })
             console.log('删除解压目录');
         }
@@ -246,7 +291,7 @@ class Book {
                             //     return
                             // }
                             // const nav = newNavMap[index]
-                            console.log('chapter00', chapter);
+                            // console.log('chapter00', chapter);
 
                             const src = chapter.content['$'].src
                             chapter.text = `${UPLOAD_URL}${dir}/${src}`
@@ -269,19 +314,8 @@ class Book {
 
                             chapters.push(chapter)
                         })
-                        const chapterTree = []
-                        chapters.forEach(c => {
-                            c.children = []
-                            if (c.pid === '') {
-                                chapterTree.push(c)
-                            } else {
-                                const parent = chapters.find(_ => _.navId === c.pid)
-                                // console.log(parent, 'parent');
-                                parent.children.push(c)
-                            }
-                        })
-                        // console.log('chapters00', chapters);
-                        // console.log('chapterTree00', chapterTree);
+
+                        const chapterTree = Book.genContentsTree(chapters)
 
                         resolve({ chapters, chapterTree })
                     } else {

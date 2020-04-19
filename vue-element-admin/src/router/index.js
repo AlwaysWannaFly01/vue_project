@@ -111,7 +111,7 @@ export const asyncRoutes = [
       name: 'bookCreate'
     }, {
       // path: 'http://www.baidu.com',
-      path: '/book/edit',
+      path: '/book/edit/:fileName',
       component: () => import('@/views/book/edit'),
       meta: {
         title: '编辑图书',

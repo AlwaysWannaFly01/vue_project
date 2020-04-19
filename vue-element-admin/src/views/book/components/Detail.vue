@@ -96,10 +96,7 @@
           <el-row>
             <el-col :span="24">
               <el-form-item :label-width="labelWidth" label="目录：">
-                <div
-                  v-if="postForm.contents && postForm.contents.length > 0"
-                  class="contents-wrapper"
-                >
+                <div v-if="contentsTree && contentsTree.length > 0" class="contents-wrapper">
                   <el-tree :data="contentsTree" @node-click="onContentClick" />
                 </div>
                 <span v-else>无</span>
@@ -118,7 +115,7 @@ import Sticky from "@/components/Sticky";
 import Warning from "./Warning";
 import EbookUpload from "@/components/EbookUpload";
 import MdInput from "@/components/MDinput";
-import { createBook } from "@/api/book";
+import { createBook, getBook, updateBook } from "@/api/book";
 // const defaultForm = {
 //   title: "",
 //   author: "",
@@ -179,6 +176,13 @@ export default {
       }
     };
   },
+  created() {
+    if (this.isEdit) {
+      // console.log(this.$route.params);
+      const { fileName } = this.$route.params;
+      this.getBookData(fileName);
+    }
+  },
   methods: {
     showGuide() {
       console.log("show guide");
@@ -216,7 +220,9 @@ export default {
                   console.log(err);
                 });
             } else {
-              // updateBook(book)
+              updateBook(book).then(response => {
+                console.log(response);
+              });
             }
           } else {
             const message = fields[Object.keys(fields)[0]][0].message;
@@ -271,7 +277,9 @@ export default {
         filePath,
         unzipPath
       };
+      console.log(contentsTree);
       this.contentsTree = contentsTree;
+      this.fileList = [{ name: originalName, url }];
     },
     onContentClick(data) {
       console.log(data);
@@ -283,7 +291,13 @@ export default {
       // this.postForm = Object.assign({}, defaultForm);
       this.contentsTree = [];
       this.fileList = [];
-      this.$refs.postForm.resetFields()
+      this.$refs.postForm.resetFields();
+    },
+    getBookData(fileName) {
+      getBook(fileName).then(response => {
+        console.log(response);
+        this.setData(response.data);
+      });
     }
   }
 };

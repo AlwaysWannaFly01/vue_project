@@ -5,7 +5,7 @@ const Result = require('../models/Result')
 const Book = require('../models/Book')
 const { UPLOAD_PATH } = require('../utlis/constant')
 const { decoded } = require('../utlis')
-const { insertBook } = require('../services/book')
+const bookService = require('../services/book')
 const boom = require('boom')
 const router = express.Router()
 router.post(
@@ -23,25 +23,51 @@ router.post(
                     new Result(book, '上传电子书成功').success(res)
                 }
                 ).catch(err => {
-                    console.log('upload-err', err)
+                    // console.log('upload-err', err)
                     next(boom.badImplementation(err))
                 })
         }
     })
 router.post('/create', (req, res, next) => {
     const decode = decoded(req)
-    console.log(decode);
-    console.log(req.body);
+    // console.log(decode);
+    // console.log(req.body);
     if (decode && decode.username) {
         req.body.username = decode.username
     }
     const book = new Book(null, req.body)
     // console.log(book, 'book99');
-    // const book = {}
-    insertBook(book).then(() => {
+    bookService.insertBook(book).then(() => {
         new Result('添加电子书成功').success(res)
     }).catch(err => {
         next(boom.badImplementation(err))
     })
 })
+router.get('/get', (req, res, next) => {
+    // console.log(req, 'req');
+    const { fileName } = req.query
+    if (!fileName) {
+        next(boom.badRequest(new Error('参数fileName不能为空')))
+    } else {
+        bookService.getBook(fileName).then(book => {
+            new Result(book, '获取电子书信息成功').success(res)
+        }).catch(err => {
+            next(boom.badImplementation(new Error(err)))
+        })
+    }
+
+})
+
+// router.post('/update', (req, res, next) => {
+//     const decode = decoded(req)
+//     if (decode && decode.username) {
+//         req.body.username = decode.username
+//     }
+//     const book = new Book(null, req.body)
+//     bookService.updateBook(book).then(() => {
+//         new Result('更新电子书成功').success(res)
+//     }).catch(err => {
+//         next(boom.badImplementation(err))
+//     })
+// })
 module.exports = router

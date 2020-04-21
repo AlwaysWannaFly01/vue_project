@@ -63,11 +63,19 @@ router.post('/update', (req, res, next) => {
     if (decode && decode.username) {
         req.body.username = decode.username
     }
-    console.log('req111',req.body);
-    
+    console.log('req111', req.body);
+
     const book = new Book(null, req.body)
     bookService.updateBook(book).then(() => {
         new Result('更新电子书成功').success(res)
+    }).catch(err => {
+        next(boom.badImplementation(err))
+    })
+})
+
+router.get('/category', (req, res, next) => {
+    bookService.getCategory().then(category => {
+        new Result(category, '获取分类成功').success(res)
     }).catch(err => {
         next(boom.badImplementation(err))
     })

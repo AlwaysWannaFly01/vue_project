@@ -110,8 +110,22 @@ const updateBook = (book) => {
     })
 }
 
+const getCategory = async () => {
+    const sql = `select * from category order by category asc`
+    const result = await db.querySql(sql)
+    const categoryList = []
+    result.forEach(item => {
+        categoryList.push({
+            label: item.categoryText,
+            value: item.category,
+            num: item.num
+        })
+    })
+    return categoryList
+}
 module.exports = {
     insertBook,
     getBook,
-    updateBook
+    updateBook,
+    getCategory
 }

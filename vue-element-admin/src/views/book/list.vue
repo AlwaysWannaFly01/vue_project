@@ -31,9 +31,9 @@
         <el-option
           v-for="item in categoryList"
           :key="item.value"
-          :value="1"
-          :label="item.value"
-        >{{ item.value }}</el-option>
+          :value="item.value"
+          :label="item.label + '(' + item.num +')'"
+        />
       </el-select>
       <el-button
         v-waves
@@ -98,7 +98,11 @@ export default {
     },
     getCategoryList() {
       getCategory()
-        .then(response => {})
+        .then(response => {
+          if (response.code === 0) {
+            this.categoryList = response.data;
+          }
+        })
         .catch(err => {
           console.log(err);
         });

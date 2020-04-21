@@ -23,3 +23,9 @@ export function updateBook(book) {
   })
 }
 
+export function getCategory(book) {
+  return request({
+    url: 'book/category',
+    method: 'get'
+  })
+}

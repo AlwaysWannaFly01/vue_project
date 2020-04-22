@@ -1,6 +1,8 @@
 const Book = require('../models/Book')
 const db = require('../db')
 const _ = require('lodash')
+const { debug } = require('../utlis/constant')
+
 const exists = (book) => {
     const { title, author, publisher } = book
     const sql = `SELECT * FROM book where title = '${title}' and author = '${author}' and publisher = '${publisher}'`
@@ -123,9 +125,26 @@ const getCategory = async () => {
     })
     return categoryList
 }
+
+const listBook = async (query) => {
+    debug && console.log(query)
+    const { category, author, title } = query
+
+    let bookSql = 'select * from book'
+    let where = 'where'
+    if (where !== 'where') {
+        bookSql = `${bookSql} ${where}`
+    }
+    const list = await db.querySql(bookSql)
+    return { list }
+    // new Promise((resolve, reject) => {
+    //     resolve()
+    // })
+}
 module.exports = {
     insertBook,
     getBook,
     updateBook,
-    getCategory
+    getCategory,
+    listBook
 }

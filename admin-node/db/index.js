@@ -124,7 +124,15 @@ const and = (where, k, v) => {
     if (where === 'where') {
         return `${where} \`${k}\` ='${v}'`
     } else {
-        return `${where} and \`${k} \` ='${v}'`
+        return `${where} and \`${k}\` ='${v}'`
+    }
+}
+
+const andLike = (where, k, v) => {
+    if (where === 'where') {
+        return `${where} \`${k}\` like '%${v}%'` // %% 通配符
+    } else {
+        return `${where} and \`${k}\` like '%${v}%'`
     }
 }
 module.exports = {
@@ -133,5 +141,6 @@ module.exports = {
     queryOne,
     insert,
     update,
-    and
+    and,
+    andLike
 }

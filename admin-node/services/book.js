@@ -144,9 +144,18 @@ const listBook = async (query) => {
         const order = symbol === '+' ? 'asc' : 'desc'
         bookSql = `${bookSql} order by \`${column}\` ${order}`
     }
+
+    let countSql = `select count(*) as count from book`
+    if (where !== 'where') {
+        countSql = `${countSql} ${where}`
+    }
+    const count = await db.querySql(countSql)
+    console.log('count', count);
+
     bookSql = `${bookSql} limit ${pageSize} offset ${offset}`
     const list = await db.querySql(bookSql)
-    return { list }
+    list.forEach(book => book.cover = Book.genCoverUrl(book))
+    return { list, count: count[0].count, page, pageSize }
     // new Promise((resolve, reject) => {
     //     resolve()
     // })

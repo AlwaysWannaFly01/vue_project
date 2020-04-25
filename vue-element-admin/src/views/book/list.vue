@@ -101,7 +101,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination :total="0" />
+    <pagination
+      v-show="total> 0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+    />
   </div>
 </template>
 
@@ -123,7 +129,8 @@ export default {
       categoryList: [],
       tableKey: 0,
       listLoading: true,
-      list: []
+      list: [],
+      total: 0
     };
   },
   created() {
@@ -167,8 +174,9 @@ export default {
       listBook(this.listQuery)
         .then(response => {
           console.log(response);
-          const { list } = response.data;
+          const { list, count } = response.data;
           this.list = list;
+          this.total = count;
           this.listLoading = false;
           this.list.forEach(book => {
             book.titleWrapper = this.wrapperKeyword("title", book.title);
@@ -184,7 +192,7 @@ export default {
       console.log("sortChange", data);
       const { prop, order } = data;
       this.sortBy(prop, order);
-      this.handleFilter()
+      this.handleFilter();
     },
     sortBy(prop, order) {
       if (order === "ascending") {

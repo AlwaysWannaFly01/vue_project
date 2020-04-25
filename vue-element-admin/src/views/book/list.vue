@@ -70,13 +70,13 @@
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" />
       <el-table-column label="书名" prop="name" align="center" width="150">
-        <template slot-scope="{row : {title}}">
-          <span>{{ title }}</span>
+        <template slot-scope="{row : {titleWrapper}}">
+          <span v-html="titleWrapper" />
         </template>
       </el-table-column>
       <el-table-column label="作者" align="center" width="150">
-        <template slot-scope="{row : { author }}">
-          <span>{{ author }}</span>
+        <template slot-scope="{row : { authorWrapper }}">
+          <span v-html="authorWrapper" />
         </template>
       </el-table-column>
       <el-table-column label="出版社" prop="publisher" align="center" width="150" />
@@ -170,6 +170,11 @@ export default {
           const { list } = response.data;
           this.list = list;
           this.listLoading = false;
+          this.list.forEach(book => {
+            book.titleWrapper = this.wrapperKeyword("title", book.title);
+            book.authorWrapper = this.wrapperKeyword("author", book.author);
+          });
+          console.log(this.list);
         })
         .catch(err => {
           console.log(err);
@@ -181,6 +186,18 @@ export default {
     handleUpdate(row) {
       console.log("row", row);
       this.$router.push(`/book/edit/${row.fileName}`);
+    },
+    wrapperKeyword(k, v) {
+      function highlight(value) {
+        return `<span style = "color: salmon">${value}</span>`;
+      }
+
+      if (!this.listQuery[k]) {
+        return v;
+      } else {
+        /* i => 表示不区分大小写  g => 表示全局性查询*/
+        return v.replace(new RegExp(this.listQuery[k], 'ig'), v => highlight(v));
+      }
     }
   }
 };

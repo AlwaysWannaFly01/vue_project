@@ -128,13 +128,15 @@ const getCategory = async () => {
 
 const listBook = async (query) => {
     debug && console.log(query)
-    const { category, author, title } = query
-
+    const { category, author, title, page = 1, pageSize = 20 } = query
+    const offset = (page - 1) * pageSize
     let bookSql = 'select * from book'
     let where = 'where'
+    category && (where = db.and(where, 'category', category))
     if (where !== 'where') {
         bookSql = `${bookSql} ${where}`
     }
+    bookSql = `${bookSql} limit ${pageSize} offset ${offset}`
     const list = await db.querySql(bookSql)
     return { list }
     // new Promise((resolve, reject) => {

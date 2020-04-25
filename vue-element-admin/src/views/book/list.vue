@@ -118,10 +118,7 @@ export default {
   },
   data() {
     return {
-      listQuery: {
-        page: 1,
-        pageSize: 20
-      },
+      listQuery: {},
       showCover: false,
       categoryList: [],
       tableKey: 0,
@@ -129,11 +126,21 @@ export default {
       list: []
     };
   },
+  created() {
+    this.parseQuery();
+  },
   mounted() {
     this.getCategoryList();
     this.getList();
   },
   methods: {
+    parseQuery() {
+      const listQuery = {
+        page: 1,
+        pageSize: 20
+      };
+      this.listQuery = { ...listQuery, ...this.listQuery };
+    },
     handleFilter() {
       console.log("handleFilter", this.listQuery);
       this.getList();

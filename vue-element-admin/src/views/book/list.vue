@@ -182,6 +182,16 @@ export default {
     },
     sortChange(data) {
       console.log("sortChange", data);
+      const { prop, order } = data;
+      this.sortBy(prop, order);
+      this.handleFilter()
+    },
+    sortBy(prop, order) {
+      if (order === "ascending") {
+        this.listQuery.sort = `+${prop}`;
+      } else {
+        this.listQuery.sort = `-${prop}`;
+      }
     },
     handleUpdate(row) {
       console.log("row", row);
@@ -196,7 +206,9 @@ export default {
         return v;
       } else {
         /* i => 表示不区分大小写  g => 表示全局性查询*/
-        return v.replace(new RegExp(this.listQuery[k], 'ig'), v => highlight(v));
+        return v.replace(new RegExp(this.listQuery[k], "ig"), v =>
+          highlight(v)
+        );
       }
     }
   }

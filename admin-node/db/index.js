@@ -124,7 +124,7 @@ const and = (where, k, v) => {
     if (where === 'where') {
         return `${where} \`${k}\` ='${v}'`
     } else {
-        return `${where} and \`${k}\` ='${v}'`
+        return `${where} and \`${k}\` ='${v}'` 
     }
 }
 

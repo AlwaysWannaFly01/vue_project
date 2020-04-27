@@ -160,10 +160,32 @@ const listBook = async (query) => {
     //     resolve()
     // })
 }
+
+const deleteBook = (fileName) => {
+    return new Promise(async (resolve, reject) => {
+        let book = await getBook(fileName)
+        if (book) {
+            if (+book.updateType === 0) {
+                reject(new Error('内置电子书不能删除'))
+            } else {
+                const bookObj = new Book(null, book)
+                const sql = `delete from book where fileName = '${fileName}'`
+                db.querySql(sql).then(() => {
+                    bookObj.reset()
+                    resolve()
+                })
+            }
+        } else {
+            reject(new Error('电子书不存在'))
+        }
+    })
+}
+
 module.exports = {
     insertBook,
     getBook,
     updateBook,
     getCategory,
-    listBook
+    listBook,
+    deleteBook
 }

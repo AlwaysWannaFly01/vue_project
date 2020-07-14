@@ -73,7 +73,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency',
-      chunks:['manifest', 'vender', 'app']
+      chunks:['manifest', 'vendor', 'app']
     }),
     new HtmlWebpackPlugin({
       filename: config.build.one,
@@ -86,7 +86,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency',
-      chunks:['manifest', 'vender', 'one']
+      chunks:['manifest', 'vendor', 'one']
     }),
     new HtmlWebpackPlugin({
       filename: config.build.two,
@@ -98,7 +98,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         removeAttributeQuotes: true
       },
       chunksSortMode: 'dependency',
-      chunks:['manifest', 'vender', 'two']
+      chunks:['manifest', 'vendor', 'two']
     }),
     // keep module.id stable when vendor modules does not change
     new webpack.HashedModuleIdsPlugin(),

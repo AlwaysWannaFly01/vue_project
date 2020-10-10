@@ -51,7 +51,7 @@ const SSlPORT = 18082
 
 const server = app.listen(1224, () => {
     const { address, port } = server.address()
-    console.log('HTTP启动成功-http://%s:%s', address, port);
+    console.log('HTTP启动成功-http://localhost:%s', port);
 }) 
 httpsServer.listen(SSlPORT, ()=>{
     console.log('HTTPS启动成功-https://localhost:%s', SSlPORT);
